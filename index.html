@@ -1,456 +1,91 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>网络安全知识中心</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="这是一个网络安全宣讲的网站">
-<meta property="og:type" content="website">
-<meta property="og:title" content="网络安全">
-<meta property="og:url" content="https://ytydsa.github.io/internet-security/index.html">
-<meta property="og:site_name" content="网络安全">
-<meta property="og:description" content="这是一个网络安全宣讲的网站">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:tag" content="博客">
-<meta name="twitter:card" content="summary">
-  
-    <link rel="alternate" href="/internet-security/atom.xml" title="网络安全" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/internet-security/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/internet-security/css/style.css">
-
-  
-    
-<link rel="stylesheet" href="/internet-security/fancybox/jquery.fancybox.min.css">
-
-  
-  
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机英语单词拼写</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+        }
+        .word-card {
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .feedback {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .hint-area {
+            margin: 10px 0;
+            font-size: 18px;
+            color: #666;
+        }
+    </style>
 </head>
-
 <body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/internet-security/" id="logo">网络安全</a>
-      </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/internet-security/" id="subtitle">欢迎进入</a>
-        </h2>
-      
+    <div class="container">
+        <h1>随机单词拼写练习</h1>
+        
+        <!-- 单词展示卡片 -->
+        <div class="word-card">
+            <h3>单词释义：<span id="word-meaning">点击开始获取单词</span></h3>
+            <p>难度：<span id="word-level">-</span></p>
+            <!-- 新增：提示区域 -->
+            <div class="hint-area" id="hint-area">
+                提示：<span id="hint-text">暂无</span>
+            </div>
+        </div>
+
+        <!-- 操作按钮区域 -->
+        <div class="d-flex gap-2 mb-3 justify-content-center">
+            <button class="btn btn-outline-secondary" id="hint-btn">显示提示</button>
+            <button class="btn btn-secondary" id="next-btn">下一个单词</button>
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#allWordsModal">查看全部单词</button>
+        </div>
+
+        <!-- 输入和验证区域 -->
+        <div class="input-group mb-3">
+            <input type="text" id="user-input" class="form-control" placeholder="请输入单词拼写">
+            <button class="btn btn-primary" id="check-btn">验证</button>
+        </div>
+
+        <!-- 反馈区域 -->
+        <div class="feedback" id="feedback"></div>
+
+        <!-- 统计区域 -->
+        <div class="mt-4">
+            <p>答题总数：<span id="total">0</span> | 正确数：<span id="correct">0</span> | 正确率：<span id="rate">0%</span></p>
+        </div>
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
-        
-          <a class="main-nav-link" href="/internet-security/">Home</a>
-        
-          <a class="main-nav-link" href="/internet-security/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/internet-security/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://ytydsa.github.io/internet-security"></form>
-      </div>
+
+    <!-- 新增：全部单词模态框 -->
+    <div class="modal fade" id="allWordsModal" tabindex="-1" aria-labelledby="allWordsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="allWordsModalLabel">全部单词列表</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" id="all-words-list">
+                        <!-- 单词列表会通过JS动态生成 -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</header>
 
-      <div class="outer">
-        <section id="main">
-  
-    <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/internet-security/2025/04/05/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2025-04-05T09:34:14.138Z" itemprop="datePublished">2025-04-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        
-<!-- 导航栏 -->
-
-[首页](#home) [威胁类型](#threats) [防护措施](#prevention) [安全工具](#tools) [关于我们](#about) [联系我们](#contact)
-
-<!-- 主体内容 -->
-
-<!-- 欢迎板块 -->
-
-# 网络安全知识中心
-
-保护您的数字资产，从了解网络安全开始
-
-### 今日安全提示
-
-定期更新系统和软件是防范网络攻击的重要措施
-
-<!-- 常见威胁 -->
-
-## 常见网络威胁
-
-* 网络钓鱼攻击
-* 勒索软件
-* DDoS攻击
-* 数据泄露
-
-<!-- 防护措施 -->
-
-## 基础防护措施
-
-### 基础防护三步走：
-
-1. 安装可靠的安全软件
-2. 启用多因素认证
-3. 定期备份重要数据
-
-<!-- 页脚 -->
-
-© 2023 网络安全知识中心
-
-紧急联系: security\@example.com
-
-<!-- 这里可以添加社交媒体图标 -->
-
-<!-- 可选JavaScript -->
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  
-  
-  <title>网络安全知识中心</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="首页 威胁类型 防护措施 安全工具 关于我们 联系我们     网络安全知识中心保护您的数字资产，从了解网络安全开始 今日安全提示定期更新系统和软件是防范网络攻击的重要措施   常见网络威胁 网络钓鱼攻击 勒索软件 DDoS攻击 数据泄露    基础防护措施基础防护三步走： 安装可靠的安全软件 启用多因素认证 定期备份重要数据    © 2023 网络安全知识中心 紧急联系: security">
-<meta property="og:type" content="article">
-<meta property="og:title" content="网络安全">
-<meta property="og:url" content="https://ytydsa.github.io/internet-security/2025/04/05/hello-world/index.html">
-<meta property="og:site_name" content="网络安全">
-<meta property="og:description" content="首页 威胁类型 防护措施 安全工具 关于我们 联系我们     网络安全知识中心保护您的数字资产，从了解网络安全开始 今日安全提示定期更新系统和软件是防范网络攻击的重要措施   常见网络威胁 网络钓鱼攻击 勒索软件 DDoS攻击 数据泄露    基础防护措施基础防护三步走： 安装可靠的安全软件 启用多因素认证 定期备份重要数据    © 2023 网络安全知识中心 紧急联系: security">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-04-05T09:34:14.138Z">
-<meta property="article:modified_time" content="2025-04-06T14:57:40.343Z">
-<meta property="article:tag" content="博客">
-<meta name="twitter:card" content="summary">
-  
-    <link rel="alternate" href="/internet-security/atom.xml" title="网络安全" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/internet-security/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/internet-security/css/style.css">
-
-  
-    
-<link rel="stylesheet" href="/internet-security/fancybox/jquery.fancybox.min.css">
-
-  
-  
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
-
-<meta name="generator" content="Hexo 7.3.0"></head>
-
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/internet-security/" id="logo">网络安全知识中心</a>
-      </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/internet-security/" id="subtitle">欢迎进入</a>
-        </h2>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
-        
-          <a class="main-nav-link" href="/internet-security/">Home</a>
-        
-          <a class="main-nav-link" href="/internet-security/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/internet-security/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://ytydsa.github.io/internet-security"></form>
-      </div>
-    </div>
-  </div>
-</header>
-
-      <div class="outer">
-        <section id="main"><article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/internet-security/2025/04/05/hello-world/" class="article-date">
-  <time class="dt-published" datetime="2025-04-05T09:34:14.138Z" itemprop="datePublished">2025-04-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <!-- 导航栏 -->
-
-<p><a href="#home">首页</a> <a href="#threats">威胁类型</a> <a href="#prevention">防护措施</a> <a href="#tools">安全工具</a> <a href="#about">关于我们</a> <a href="#contact">联系我们</a></p>
-<!-- 主体内容 -->
-
-<!-- 欢迎板块 -->
-
-<h1 id="网络安全知识中心"><a href="#网络安全知识中心" class="headerlink" title="网络安全知识中心"></a>网络安全知识中心</h1><p>保护您的数字资产，从了解网络安全开始</p>
-<h3 id="今日安全提示"><a href="#今日安全提示" class="headerlink" title="今日安全提示"></a>今日安全提示</h3><p>定期更新系统和软件是防范网络攻击的重要措施</p>
-<!-- 常见威胁 -->
-
-<h2 id="常见网络威胁"><a href="#常见网络威胁" class="headerlink" title="常见网络威胁"></a>常见网络威胁</h2><ul>
-<li>网络钓鱼攻击</li>
-<li>勒索软件</li>
-<li>DDoS攻击</li>
-<li>数据泄露</li>
-</ul>
-<!-- 防护措施 -->
-
-<h2 id="基础防护措施"><a href="#基础防护措施" class="headerlink" title="基础防护措施"></a>基础防护措施</h2><h3 id="基础防护三步走："><a href="#基础防护三步走：" class="headerlink" title="基础防护三步走："></a>基础防护三步走：</h3><ol>
-<li>安装可靠的安全软件</li>
-<li>启用多因素认证</li>
-<li>定期备份重要数据</li>
-</ol>
-<!-- 页脚 -->
-
-<p>© 2025 网络安全知识中心</p>
-<p>紧急联系: security@example.com</p>
-<!-- 这里可以添加社交媒体图标 -->
-
-<!-- 可选JavaScript -->
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://ytydsa.github.io/internet-security/2025/04/05/hello-world/" data-id="cm987giv60000s0u961ao9w7j" data-title="" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-    </footer>
-  </div>
-  
-    
-  
-</article>
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-
-  
-    
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">归档</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/internet-security/archives/2025/04/">四月 2025</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">最新文章</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/internet-security/2025/04/05/hello-world/">(next)</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2025 网络安全知识中心<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/internet-security/" class="mobile-nav-link">Home</a>
-  
-    <a href="/internet-security/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/internet-security/js/jquery-3.6.4.min.js"></script>
-
-
-
-  
-<script src="/internet-security/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/internet-security/js/script.js"></script>
-
-
-
-
-
-  </div>
-</body>
-</html>
-
-
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://ytydsa.github.io/internet-security/2025/04/05/hello-world/" data-id="cm98853bj0000i8u92r627jar" data-title="" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-
-  
-    
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">归档</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/internet-security/archives/2025/04/">四月 2025</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">最新文章</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/internet-security/2025/04/05/hello-world/">(no title)</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2025 网络安全<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/internet-security/" class="mobile-nav-link">Home</a>
-  
-    <a href="/internet-security/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/internet-security/js/jquery-3.6.4.min.js"></script>
-
-
-
-  
-<script src="/internet-security/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/internet-security/js/script.js"></script>
-
-
-
-
-
-  </div>
+    <script src="words.js"></script>
+    <script src="app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
